@@ -1,110 +1,73 @@
-Relatório Espelho de Pedido de Compras
-Este projeto contém o código fonte para a geração do relatório de "Espelho de Pedido de Compras" utilizando TL++ (ADVPL) no ambiente Protheus. O relatório exibe informações consolidadas do pedido, tais como o cabeçalho, os itens principais (com detalhes em duas seções: dados da tabela e informações descritivas) e os totais.
+# 🧾 Relatório de Espelho de Pedido de Compras
 
-Sumário
-Visão Geral
+Este projeto tem como objetivo gerar um relatório formatado de **espelho de pedido de compras**, utilizando recursos gráficos do `oImpFRMC` no **TOTVS Protheus (ADVPL/TL++)**.
 
-Arquivos Principais
+---
 
-Estrutura do Relatório
+## 📌 Funcionalidades
 
-Funcionalidades
+- Impressão de cabeçalhos com colunas fixas.
+- Impressão de linhas de itens com dados organizados em colunas.
+- Impressão de informações adicionais (descrição, fornecedor, observações etc.).
+- Impressão da área de totais com colunas distintas para tributos e valores finais.
 
-Como Usar
+---
 
-Personalização e Ajustes
+## 🧱 Estrutura das Funções
 
-Contribuição
+### `fImprimeItens()`
 
-Licença
+Responsável por:
 
-Visão Geral
-O relatório de espelho de pedido de compras foi desenvolvido para auxiliar na visualização detalhada dos dados de um pedido, incluindo os itens e seus detalhes, além dos totais e condições de pagamento, transporte, dentre outras informações. O código está estruturado para ser modular, facilitando manutenções e futuras alterações.
+- Gerar o cabeçalho das colunas dos itens.
+- Iterar sobre os itens e desenhar:
+  - Colunas com: `#`, `Item`, `NCM`, `CFOP`, `Entrega`, `Qtd`, `Valor Unit.`, `Desc.`, `Total`.
+  - Informações detalhadas de cada item como **descrição**, **fornecedor**, **observação**, etc.
 
-Arquivos Principais
-EspelhoPedido.prw – Arquivo principal que contém a função EspelhoPedido() e a configuração inicial do objeto gráfico (oImpFRMC).
+#### Parâmetros:
+- `aItens`: array de itens com os dados.
+- `nRow_`, `nCol_`, `nCol_R`: controle de posição da impressão no relatório.
 
-Funções de Impressão – Conjunto de funções:
+---
 
-fGetDados() / fGetMock() – Responsáveis por obter (ou gerar dados de teste) o conteúdo do pedido.
+### `fImprimeTotais()`
 
-fImprimeItens() – Função que imprime os itens do pedido. Ela divide a impressão em duas seções:
+Responsável por:
 
-A primeira parte exibe uma tabela com os dados principais (número do item, código, NCM, CFOP, data de entrega, quantidade, valor unitário, desconto e total).
+- Exibir a tabela de totais e tributos ao final do relatório.
+- Colunas para: `Valor Total`, `Frete`, `Seguro`, `IPI`, `PIS`, `COFINS`, `ICMS`, entre outros.
 
-A segunda parte imprime os detalhes descritivos de cada item (descrição, fornecedor, código externo, observação, solicitado, embalagem e prazo de entrega).
+#### Parâmetros:
+- `jTotais`: objeto JSON contendo os valores dos totais e impostos.
+- `nRow_`, `nCol_`, `nCol_R`: controle de posição.
 
-fImprimeTotais() – Função que imprime os totais do pedido (valor dos produtos, frete, seguro, impostos, descontos e valor total) organizados em colunas.
+---
 
-Outras funções de impressão para as seções de transporte e condições de pagamento também foram implementadas.
+## 🧮 Exemplo de Item Renderizado
 
-Estrutura do Relatório
-O relatório é composto das seguintes partes:
+1 MPC0112600021 33029019 2101 14/04/25 7.00 285.15 0.00 1996.05
 
-Cabeçalho Geral
-Contém informações do pedido e configuração do objeto gráfico (oImpFRMC), tais como resolução, orientação e margens.
+---
 
-Itens do Pedido
+## ✨ Observações Técnicas
 
-Tabela Principal:
-Imprime os dados básicos do item em formato tabular com colunas fixas:
+- A função `SayAlign()` é usada com:
+  - **Posição X** e **largura** definidas dinamicamente pelas colunas.
+  - Parâmetro de espaçamento vertical fixo (ex: `15`).
+  - Alinhamento `ALIGN_H_LEFT` ou `ALIGN_H_RIGHT` conforme a necessidade.
+- `nMargRel_` e `nColTot_` definem a margem inicial e o total da largura do relatório.
 
-Colunas: #, Item, NCM, CFOP, Entrega, Quantidade, Vlr Un, Vlr Desc, Vlr Total
+---
 
-Detalhes do Item:
-Imprime abaixo da linha principal os detalhes do item, como:
+## 📎 Dependências
 
-Descrição, Fornecedor, Código Externo, Observação, Solicitado, Embalagem e Entrega.
+- Ambiente Protheus com suporte a relatórios via `oImpFRMC`.
+- Fonte `oFont10` e `oFont12` devidamente carregadas.
 
-Totais do Pedido
-Os totais são impressos em formato de colunas, mostrando os valores de:
+---
 
-Valor Total dos Produtos, Frete, Seguro, Outras Despesas, Desconto, e, para cada imposto (ex.: IPI, PIS, COFINS, ICMS), a Base de Cálculo e o Valor do Imposto.
+## 👨‍💻 Autor
 
-Seções Adicionais
-Outras seções, como transporte e condições de pagamento, podem ser incluídas conforme necessário, utilizando a mesma abordagem modular e iterativa.
+Desenvolvido por **[TigoP]**, contador com mais de 15 anos de experiência e apaixonado por tecnologia aplicada à gestão empresarial.
 
-Funcionalidades
-Modularização:
-Cada função tem uma responsabilidade única, de forma que a impressão de cada parte do relatório é facilmente manipulável e ajustável.
-
-Iteração Dinâmica:
-Tanto os itens quanto os totais são impressos utilizando arrays e loops, garantindo que o sistema lide com qualquer quantidade de itens sem alterações manuais no código.
-
-Configuração Gráfica:
-Utiliza o objeto FWMSPrinter para configurar a impressão (resolução, orientacão, tamanho do papel, margens, etc.) e gerar o PDF.
-
-Suporte a Dados Mock:
-Em ambiente de teste, as funções fGetDados() e fGetMock() permitem a geração de dados fictícios para visualizar e validar o relatório.
-
-Como Usar
-Configuração do Ambiente:
-Certifique-se de que o ambiente Protheus esteja devidamente configurado com TL++ (ADVPL) e que as bibliotecas necessárias (ex.: fwprintsetup.ch, rptdef.ch, tlpp-core.th) estejam disponíveis.
-
-Execução:
-Chame a função EspelhoPedido() para gerar o relatório de espelho de pedido de compras. Essa função se encarrega de:
-
-Inicializar o objeto gráfico (oImpFRMC)
-
-Obter os dados (reais ou mock)
-
-Chamar as funções de impressão de cada parte do relatório (cabeçalho, itens, totais, transporte, etc.)
-
-Finalizar a página e exibir uma pré-visualização, se configurado.
-
-Customização:
-Para alterar o layout, basta ajustar os offsets (por exemplo, em aCols ou aColOffsets) ou os espaçamentos verticais (nRow_ += ...) conforme necessário.
-
-Personalização e Ajustes
-Ajuste de Layout:
-Os arrays que definem os offsets das colunas (como aCols e aColOffsets) podem ser modificados para alterar a distribuição horizontal das colunas.
-
-Espaçamento Vertical:
-Variáveis como nRow_ são incrementadas com valores fixos (por exemplo, 15, 20, 40) para controlar o espaçamento entre linhas. Esses valores podem ser ajustados conforme seu design.
-
-Alteração de Fontes:
-As fontes utilizadas (ex.: oFont12, oFont10) podem ser alteradas para ajustar o tamanho e o estilo conforme o padrão da empresa.
-
-Contribuição
-Contribuições são bem-vindas!
-Se você encontrar melhorias, correções ou quiser adicionar funcionalidades, sinta-se à vontade para abrir issues ou submeter pull requests.
+---
